@@ -29,10 +29,25 @@ bool Board::find(const Point& 始点, const Point& 終点, std::vector<std::vect
 
 		// ★★★ todo: ここを素敵にしよう
 		// 終点に向かって歩く
-		if (現在.x < 終点.x) { 現在.x++; continue; }
-		if (終点.x < 現在.x) { 現在.x--; continue; }
-		if (現在.y < 終点.y) { 現在.y++; continue; }
-		if (終点.y < 現在.y) { 現在.y--; continue; }
+		int dx = 終点.x - 現在.x;
+		int dy = 終点.y - 現在.y;
+
+		Point 左右 = 現在; 左右.x += (dx > 0) ? 1 : -1;
+		Point 上下 = 現在; 上下.y += (dy > 0) ? 1 : -1;
+
+		if (dx * dx < dy * dy)
+		{
+			// Y方向に近づこうとして、だめならX方向に動く
+			if (map_[上下.y][上下.x].canMove()) { 現在 = 上下; continue; }
+			if (map_[左右.y][左右.x].canMove()) { 現在 = 左右; continue; }
+		}
+
+		else
+		{
+			// X方向に近づこうとして、だめならY方向に動く
+			if (map_[左右.y][左右.x].canMove()) { 現在 = 左右; continue; }
+			if (map_[上下.y][上下.x].canMove()) { 現在 = 上下; continue; }
+		}
 	}
 
 	return true;
